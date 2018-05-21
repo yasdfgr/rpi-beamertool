@@ -139,6 +139,7 @@ int ArtnetReceiver::parseArtNet(int len) {
                                 this->dmx512[i] = this->buffer[18+i];
                             }
                             this->updateCanvasValues();
+                            this->updateMoveValues(); //JB neu
                         }
                     }
                 }
@@ -211,6 +212,16 @@ void ArtnetReceiver::updateCanvasValues() {
 
         canvases[i]->setShutterSpeed(this->dmx512[this->dmx_start +i * 20 - 1 + 14]);
    }
+}
+
+void ArtnetReceiver::updateMoveValues() {
+	int pan = this->dmx512[this->dmx_start + 4 * 20 - 1 + 0];
+	int panFine = this->dmx512[this->dmx_start + 4 * 20 - 1 + 1];
+	int tilt = this->dmx512[this->dmx_start + 4 * 20 - 1 + 2];
+	int tiltFine = this->dmx512[this->dmx_start + 4 * 20 - 1 + 3];
+	int beamerFocus = this->dmx512[this->dmx_start + 4 * 20 - 1 + 4];
+	int beamerZoom = this->dmx512[this->dmx_start + 4 * 20 - 1 + 5];
+	this->serialSend->setValues(pan, panFine, tilt, tiltFine, beamerFocus, beamerZoom);
 }
 
 float ArtnetReceiver::correctAngleRange(float angle) {

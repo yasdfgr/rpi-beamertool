@@ -49,10 +49,11 @@ int main (int argc, char **argv) {
     screen->setZoom(config->getZoomType());
     c_screen->print("Screen: %i x %i\n", screen->getScreenWidth(), screen->getScreenHeight());
 
+	//SerialSender * serSend = new SerialSender(interface,baud);
+
     // Init Lasersim on ArtnetReceiver
     int lasers_id = screen->generateCanvasGroup(config->getLasersimNum(), "CONTENT_TEXTURE_256");
     ArtnetReceiver * dmxr = new ArtnetReceiver(screen, lasers_id, config->getArtnetUniverse(), config->getArtnetSubnet(), config->getLasersimDMXStart(), config->getScalingMultiplier(), config->getLedGpioPin());
-
     c_screen->print("Init Done! Starting main loop... Press 'q' to quit! \n");
 
     // Main Loop
