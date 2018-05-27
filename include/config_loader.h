@@ -8,9 +8,12 @@
 #define CFG_STD_ARTNET_UNIVERSE 0
 #define CFG_STD_LASERSIM_NUM 1
 #define CFG_STD_LASERSIM_DMX_START 100
+#define CFG_STD_LASERSIM_DMX_OUT_CH 4
 #define CFG_STD_ZOOMING 1
 #define CFG_STD_SCALE_MULTIPLIER 1.0f
 #define CFG_STD_LED_GPIO_PIN -1
+#define CFG_STD_SERIAL_SENDER_LED_GPIO_PIN -1
+#define CFG_STD_SERIAL_SENDER_BAUD 9600
 
 #define CFG_FILE "config.txt"   // Dateiname(/Pfad) der cfg Datei
 
@@ -57,9 +60,13 @@ namespace Beamertool {
         int artnet_subnet;          // Art-Net Subnet
         int lasersim_num;           // Anzahl der Laser Simulationen
         int lasersim_dmx_start;     // Startadresse des ersten Lasers
+        int lasersim_dmx_out_ch;    // Anzahl physischer DMX ausgabe vor dem ersten Laser
         int zooming_type;           // Zoom Typ: 1=Windows Beamertool, 2=Kreis
         float scaling_multiplier;   // Multiplikator für die Skalierung
         int led_gpio_pin;           // GPIO Pin der Artnet Receiver Status LED
+        int serial_sender_led_gpio_pin; 
+        std::string serial_sender_port_name;
+        int serial_sender_baud;
     };
 }
 

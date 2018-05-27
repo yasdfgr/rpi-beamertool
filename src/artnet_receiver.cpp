@@ -15,13 +15,15 @@
 #include "artnet_receiver.h"
 #include "canvas/canvas_manager.h"
 #include "canvas/canvas.h"
+#include "serial_sender.h"
 
 using namespace std;
 using namespace Beamertool;
 
-ArtnetReceiver::ArtnetReceiver(CanvasManager * screen, int canvases_id, unsigned int universe, unsigned int subnet, int dmx_start, float scale_multiplier, int led_gpio_pin) {
+ArtnetReceiver::ArtnetReceiver(SerialSender * serSend, CanvasManager * screen, int canvases_id, unsigned int universe, unsigned int subnet, int dmx_start, float scale_multiplier, int led_gpio_pin) {
 
     // save parameters
+    this->serSend = serSend;
     this->screen = screen;
     this->canvases_id = canvases_id;
     this->artnet_universe = universe;
@@ -215,13 +217,23 @@ void ArtnetReceiver::updateCanvasValues() {
 }
 
 void ArtnetReceiver::updateMoveValues() {
-	int pan = this->dmx512[this->dmx_start + 4 * 20 - 1 + 0];
-	int panFine = this->dmx512[this->dmx_start + 4 * 20 - 1 + 1];
-	int tilt = this->dmx512[this->dmx_start + 4 * 20 - 1 + 2];
-	int tiltFine = this->dmx512[this->dmx_start + 4 * 20 - 1 + 3];
-	int beamerFocus = this->dmx512[this->dmx_start + 4 * 20 - 1 + 4];
-	int beamerZoom = this->dmx512[this->dmx_start + 4 * 20 - 1 + 5];
-	this->serialSend->setValues(pan, panFine, tilt, tiltFine, beamerFocus, beamerZoom);
+	int pan = this->dmx512[this->dmx_start - 1 + 0];
+	int panFine = this->dmx512[this->dmx_start - 1 + 1];
+	int tilt = this->dmx512[this->dmx_start - 1 + 2];
+	int tiltFine = this->dmx512[this->dmx_start - 1 + 3];
+	int beamerFocus = this->dmx512[this->dmx_start - 1 + 4];
+	int beamerZoom = this->dmx512[this->dmx_start - 1 + 5];
+	int beamerIrOnOff = this->dmx512[this->dmx_start - 1 + 6];
+	
+	int values[16];
+	
+	for (int i=0; i<16; i++)
+	{
+		values[i] = this->dmx512[this->dmx_start - 1 + i];
+	}
+	
+	//this->serSend->setValues(pan, panFine, tilt, tiltFine, beamerFocus, beamerZoom);
+	this->serSend->setValues(values);
 }
 
 float ArtnetReceiver::correctAngleRange(float angle) {

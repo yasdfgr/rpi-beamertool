@@ -11,6 +11,7 @@
 #include "config_loader.h"
 #include "canvas/canvas_manager.h"
 #include "artnet_receiver.h"
+#include "serial_sender.h"
 
 using namespace std;
 using namespace Beamertool;
@@ -49,11 +50,13 @@ int main (int argc, char **argv) {
     screen->setZoom(config->getZoomType());
     c_screen->print("Screen: %i x %i\n", screen->getScreenWidth(), screen->getScreenHeight());
 
-	//SerialSender * serSend = new SerialSender(interface,baud);
+	//Initi Serial Sender
+	//SerialSender * serSend = new SerialSender(config->getSerialPortName,config->getSerialPortBaud,config->getLedGpioPin());
+	SerialSender * serSend = new SerialSender("/dev/ttyUSB0",9600,16,-1);
 
     // Init Lasersim on ArtnetReceiver
     int lasers_id = screen->generateCanvasGroup(config->getLasersimNum(), "CONTENT_TEXTURE_256");
-    ArtnetReceiver * dmxr = new ArtnetReceiver(screen, lasers_id, config->getArtnetUniverse(), config->getArtnetSubnet(), config->getLasersimDMXStart(), config->getScalingMultiplier(), config->getLedGpioPin());
+    ArtnetReceiver * dmxr = new ArtnetReceiver(serSend, screen, lasers_id, config->getArtnetUniverse(), config->getArtnetSubnet(), config->getLasersimDMXStart(), config->getScalingMultiplier(), config->getLedGpioPin());
     c_screen->print("Init Done! Starting main loop... Press 'q' to quit! \n");
 
     // Main Loop

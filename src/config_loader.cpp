@@ -12,6 +12,7 @@ ConfigLoader::ConfigLoader() {
     this->artnet_subnet = CFG_STD_ARTNET_SUBNET;
     this->lasersim_num = CFG_STD_LASERSIM_NUM;
     this->lasersim_dmx_start = CFG_STD_LASERSIM_DMX_START;
+    this->lasersim_dmx_out_ch = CFG_STD_LASERSIM_DMX_OUT_CH;
     this->zooming_type = CFG_STD_ZOOMING;
     this->scaling_multiplier = CFG_STD_SCALE_MULTIPLIER;
     this->led_gpio_pin = CFG_STD_LED_GPIO_PIN;
@@ -76,6 +77,14 @@ void ConfigLoader::parseCleanLine(string &line) {
         if (this->lasersim_dmx_start < 1 || this->lasersim_dmx_start > 490) {
             this->lasersim_dmx_start = CFG_STD_LASERSIM_DMX_START;
         }
+        
+    // DMX_OUT_CH
+    } else if (line.compare(0, 11, "DMX_OUT_CH=") == 0) {
+        line.erase(0, 11);
+        this->lasersim_dmx_out_ch = stoi(line);
+        if (this->lasersim_dmx_out_ch < 0 || this->lasersim_dmx_out_ch > 16) {
+            this->lasersim_dmx_out_ch = CFG_STD_LASERSIM_DMX_OUT_CH;
+        }
     
     // ZOOM
     } else if (line.compare(0, 5, "ZOOM=") == 0) {
@@ -99,11 +108,33 @@ void ConfigLoader::parseCleanLine(string &line) {
         if (this->led_gpio_pin < 0 || this->led_gpio_pin > 30) {
             this->led_gpio_pin = -1;
         }
+    
+    // SERIAL_SENDER_LED_GPIO_PIN
+    } else if (line.compare(0, 27, "SERIAL_SENDER_LED_GPIO_PIN=") == 0) {
+        line.erase(0, 27);
+        this->serial_sender_led_gpio_pin = stoi(line);
+        if (this->serial_sender_led_gpio_pin < 0 || this->serial_sender_led_gpio_pin > 30) {
+            this->serial_sender_led_gpio_pin = -1;
+        }
+    
+    // SERIAL_SENDER_PORT_NAME
+    } else if (line.compare(0, 24, "SERIAL_SENDER_PORT_NAME=") == 0) {
+        line.erase(0, 24);
+        this->serial_sender_port_name = line;
+        //strncpy(this->serial_sender_port_name, line, strnlen(line,50));
+        //strncpy(this->serial_sender_port_name, this->serial_sender_port_name, strnlen(this->serial_sender_port_name,50));
+        
+    // SERIAL_SENDER_BAUD
+    } else if (line.compare(0, 19, "SERIAL_SENDER_BAUD=") == 0) {
+        line.erase(0, 19);
+        this->serial_sender_baud = stoi(line);
+        
     }
 
     // plausibility test - passt DMX_START und Anzahl zusammen?
-    if ((this->lasersim_dmx_start + 20 * this->lasersim_num) > 512) {
+    if ((this->lasersim_dmx_start + this->lasersim_dmx_out_ch + 20 * this->lasersim_num) > 512) {
         this->lasersim_dmx_start = CFG_STD_LASERSIM_DMX_START;
+        this->lasersim_dmx_out_ch = CFG_STD_LASERSIM_DMX_OUT_CH;
         this->lasersim_num = CFG_STD_LASERSIM_NUM;
     }
 }

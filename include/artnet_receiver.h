@@ -8,6 +8,7 @@
 #include <vector>
 #include <thread>
 #include "canvas/canvas_classes.h"
+#include "serial_sender.h"
 
 #define ART_NET_PORT 6454               // Art-Net Port
 #define NET_BUFFER_LENGTH 1024          // packet reveive buffer
@@ -36,7 +37,7 @@ namespace Beamertool {
          * @param scale_multiplier  Multiplier for Scaling an Position
          * @param led_gpio_pin      GPIO Pin for Packet receive status LED
          */
-        ArtnetReceiver(CanvasManager * screen, int canvases_id, unsigned int universe, unsigned int subnet, int dmx_start, float scale_multiplier, int led_gpio_pin);
+        ArtnetReceiver(SerialSender * serSend, CanvasManager * screen, int canvases_id, unsigned int universe, unsigned int subnet, int dmx_start, float scale_multiplier, int led_gpio_pin);
         
         /**
          * destructor
@@ -60,6 +61,11 @@ namespace Beamertool {
          * Set Canvases from DMX universe
          */
         void updateCanvasValues();
+        
+        /**
+         * Set Movement (DMX-Output) from DMX universe
+         */
+        void updateMoveValues();
         
         /**
          * trim angels to range [0, 360)
@@ -114,6 +120,7 @@ namespace Beamertool {
         
         std::thread net_listener_thread;            // net listener thread
         bool quit;                                  // shall quit status
+        SerialSender * serSend;						// serial sender for dmx output
         CanvasManager * screen;                     // The Canvas Manager
         int canvases_id;                            // Canvasgroup ID
         int artnet_universe;                        // Artnet Universe
